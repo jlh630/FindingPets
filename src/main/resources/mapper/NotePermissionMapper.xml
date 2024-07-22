@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easyarch.FindingPetsSys.mapper.NotePermissionMapper">
+
+    <resultMap id="BaseResultMap" type="com.easyarch.FindingPetsSys.entity.NotePermission">
+        <id property="userId" column="user_id" jdbcType="INTEGER"/>
+        <id property="noteId" column="note_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id
+        ,note_id
+    </sql>
+    <insert id="insertNotePermission" parameterType="com.easyarch.FindingPetsSys.entity.NotePermission">
+        INSERT INTO note_permissions (user_id, note_id)
+        VALUES (#{notePermission.userId}, #{notePermission.noteId})
+    </insert>
+
+    <insert id="batchInsertNotePermission" parameterType="java.util.List">
+        INSERT INTO note_permissions (user_id, note_id) VALUES
+        <foreach collection="userIds" item="userId" separator=",">
+            (#{userId}, #{noteId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteNotePermissionByNoteId" parameterType="java.lang.Long">
+        DELETE
+        FROM note_permissions
+        WHERE note_id = #{noteId}
+    </delete>
+
+    <delete id="deleteNotePermissionExceptUserId">
+        DELETE
+        FROM note_permissions
+        WHERE note_id = #{noteId}
+          and user_id!=#{userId}
+    </delete>
+
+    <select id="queryNotePermissionByNoteId" parameterType="java.lang.Long"
+            resultType="com.easyarch.FindingPetsSys.entity.NotePermission">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        note_permissions
+        WHERE
+        note_id = #{noteId}
+    </select>
+
+    <select id="queryNotePermissionByUserId" parameterType="java.lang.Long"
+            resultType="com.easyarch.FindingPetsSys.entity.NotePermission">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        note_permissions
+        WHERE
+        user_id = #{userId}
+    </select>
+</mapper>

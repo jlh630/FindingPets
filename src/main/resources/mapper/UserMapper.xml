@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easyarch.FindingPetsSys.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.easyarch.FindingPetsSys.entity.User">
+        <id property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,email,user_name,
+        password,img_url
+    </sql>
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into  users (email,user_name,password)
+        values (#{user.email},#{user.userName},#{user.password})
+    </insert>
+    <update id="updateUser">
+        update users
+        <set>
+            <if test="user.email != null">email = #{user.email},</if>
+            <if test="user.userName != null">user_name = #{user.userName},</if>
+            <if test="user.password != null">password = #{user.password}</if>
+            <if test="user.imgUrl != null">img_url = #{user.imgUrl}</if>
+        </set>
+        where user_id = #{user.userId}
+    </update>
+    <select id="queryUserByUserId" resultType="com.easyarch.FindingPetsSys.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from users
+        where user_id=#{id}
+    </select>
+    <select id="listUser" resultType="com.easyarch.FindingPetsSys.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from users
+    </select>
+    <select id="queryUserByUserEmail" resultType="com.easyarch.FindingPetsSys.entity.User">
+        select
+        <include refid="Base_Column_List" />
+        from users
+        where email=#{email}
+    </select>
+    <select id="selectUsersByUserIds" resultType="com.easyarch.FindingPetsSys.entity.User">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM users WHERE user_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

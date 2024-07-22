@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Code</title>
+</head>
+<body style="color: #333; padding: 20px;">
+<div style="background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <p>亲爱的用户</p>
+    <p>感谢您使用我们的宠物管家平台。为了保护您的账户安全，请使用以下验证码：</p>
+    <div style="margin: 20px 0;">
+        <img th:src="'data:image/png;base64,' + ${base64Image}" alt="captcha Code"/>
+    </div>
+    <p>如果您没有请求此验证码，请忽略此邮件。</p>
+    <p>祝您使用愉快！</p>
+    <h2 style="color: #4CAF50;">宠物管家平台</h2>
+</div>
+</body>
+</html>
