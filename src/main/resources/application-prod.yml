@@ -1,0 +1,81 @@
+server:
+  port: 8080
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: smtp.qq.com  # SMTP服务器的地址，这是QQ的，其他的邮箱要改一下
+    username: 2379746504@qq.com  # 发送方的邮箱
+    password: fakcvseuswpoebae  # 刚刚获得的16位授权码
+    properties:
+      mail:
+        smtp:
+          auth: true  # 设置是否需要认证
+          starttls:
+            enable: true  # 启用STARTTLS
+            required: true  # 强制使用STARTTLS
+    default-encoding: UTF-8  # 默认编码
+    port: 587
+  datasource:
+    url: jdbc:mysql://172.19.16.118:3306/FindingPets
+    username: root
+    password: jlhjlhjlh...
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      keepalive-time: 1800000
+  redis:
+    database: 0
+    host: 172.19.16.118
+    port: 6379
+
+logging:
+  config: classpath:logback-spring.xml
+
+rocketmq:
+  name-server: 172.19.16.118:9876
+  producer:
+    group: fp
+    sendMessageTimeout: 20000
+    retry-times-when-send-async-failed: 2
+    retry-times-when-send-failed: 2
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true #下划线转驼峰
+  mapper-locations: classpath:/mapper/*.xml
+
+minio:
+  OutEndpoint: https://jianglh.icu/oss
+  endpoint: http://172.19.16.118:9000
+  accessKey: jlhadmin
+  secretKey: jlhadmin
+  user:
+    bucketName: userimg
+  notes:
+    bucketName: noteimg
+  imgSize: 50
+  fileSize: 300
+
+alipay:
+  appId: 9021000135691138
+  appPrivateKey: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCbgIt+1mjyUoJZQQJQVGndK90cWm+CgC7z+ev2tjgceIJypufM2u/JFOHGFhlkwgikj5rurir7eF5qW8lMROyu8/VONwkBHxOv1B8z9pr5fLlrJtRcGv8WMXFRK21ceLe9lOl8KvWZJt/OC9LRJ/grlQn6oQYrgsVoAWkUrrA/suc7/6vqiaf7Y5yaHoPdqcwsaqVQp2IvQp1NVuIovrXiDbVgzPj02qVlmV2Xytq1OZoEVR6Pud2CqboGav11EcmBYXUeZoibQIextcUWrdmYt2RgbpqleN1YCnV9KXf6NRMzfrdu6fbWVooeKcUdvPvnLmD9m8YBIq0oxbgHPhcLAgMBAAECggEAEjmZn87/U89Jya4t2D5cffiDHKyYvyHI3v1eo3at0uBo4YkgR8ktK1MQNwgmB8IaAzd1gB3Xmct8vVhumkrFtqePC5C1tHTw+L2SvqNbfHwauy083GKpnO9Eia/eTGU1m7mVN+FNEZsVxe9q0OqvUmRQXBh9QaI9AriPmUX0EDL2iWtBWQ5GSarT+Bzw+nLdTU5x/+NZmnkjib2O7JCF4Gxup1H5nPcWo17p5gnUtXiVOzqljEO1w9ISNV2d6aMUMiWre+1ln7aDkUuUrXs0jgXcpLn9ZA9VLHSX3l2alA5whlEcob58NbCoAYrMy9gyqGnEwXjRTd8bYZnt98dowQKBgQD8QMucRj3D7ia+5en3QCu4Rngfp6/r0oAAunXE4UodUeC7Hc0rz2I2btCQud1sEkYvJpnd/Ox6kNfqje9Yulu6g4wHKDy71IRyLIVXXALQAKEcaz3D/nYUlB4OHY/MN+ExJbBpyIWJeSTFzK2kbpF9qLPNU9eh9YCq7t1uYqUPawKBgQCdz9lp/H9fZ30i7iJQtcLgiFWqaSnOW1Xs5pCz44Ut2HS7emeF/a+BlGD4sjV27OXt2vgeUG+H9JdiPKnLe4UJhJ7h3CMmKTegE0QG6DuViPEY2CPencm3m6LvlyTazDFEpjK5rI3j17/kTrmbvysCgafmC14g0qjuxZQt/Vce4QKBgQCdkTfeKP4h6hvnuKPZ3wqwM8yLMWqxKq7sRYyU64kpIWD4YNgtGoClsbiz/nWyMQQIJduND5UDxoAosnokeVwc+Fi6i8bMKSaGTwsHk6DqHsqEfvR4/fTyS8cuWAbfsLQIyBsXKLtJMRPoPj7k7HATBxMxGcMjFsBFhalpb1LdewKBgFAbOL6PGEziaGf5v1t+2DxHmEyXc0w3msdVRnC59lmOPbsI6FHgs10wZ4T2WSNUH2b8tuQUanj11H5eUsZineZ19nyp1QHC/GR6QxbKfaxrRg8ZcCPJrqJQE4ZRD7ks23mAb9FGYQQd+V84AwmnIXr1O7gPXymEJZKGorAxoC6hAoGAf4u3g2Hj65YDmWVvpAmVeiV7yzseuAsAbW2I4TnprZ0zNHHYRE50+FDP3DqHi25pU1U/H3YtoRuXaJOEhCt1ieg23yuCB+0IyD7Br/K+AH3DylKO8LxDbxyrzHutApNJzKyYZV5kjgiea83kS6c7ikwhTWjIA0hVAHsGUk3JOGo=
+  alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkCyQ0ztIrh/WW8WEKp/4BTp2gq3RllAZk1i94iHBKjcxH9hFce2jT3f5ZDhXRI10l4V5nMVO+wzJRihIfsK1bjC5kCwEHWCXWR0HWWvcyqlwpAYlAs15/7QcovBLWZkZuoQesBnRF1cNQtQz5EcScGU0qLviWv0Ru7ocqz9nyU97SeRWqRRjBL06dbcOF0nafGA5W24LGLmxCaxWV3UTOJqSBFQMjFu38/EW00b/zpy+0hFZALracDIVavr+G9PxgC8GRll38BWb6KX/GIl+OyMIdIWNn6ZmGb6vfpCLYhN3jLgQbzpYcSG+8Qegp8iDnwr1JuUL6ODhG+Ih1XYnZQIDAQAB
+  notifyUrl: https://jianglh.icu/orders/notify
+  serverUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+
+mqtt:
+  host: tcp://172.19.16.118:1883
+  #MQTT-连接服务器默认客户端ID
+  clientID: mqtt_springboot
+  #MQTT-用户名
+  username: springboot
+  #MQTT-密码
+  password: 112233qq
+  topic: client/status,location/+
+  #连接超时
+  timeout: 1000
+  #设置会话心跳时间
+  keepalive: 100

@@ -1,0 +1,84 @@
+version: '4'
+services:
+  # NameServer 服务
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.1.1
+    container_name: rocketmq-namesrv
+    ports:
+      - "9876:9876"  # 映射 NameServer 的端口
+    volumes:
+      - /home/jlh/docker_v/rocketmq/conf/namesrv:/home/rocketmq/rocketmq-5.1.1/conf  # 映射配置文件目录
+    command: sh /home/rocketmq/rocketmq-5.1.1/bin/mqnamesrv # 启动 NameServer
+
+  # Broker 服务
+  rocketmq-broker:
+    image: apache/rocketmq:5.1.1
+    container_name: rocketmq-broker
+    depends_on:
+      - rocketmq-namesrv  # 依赖于 NameServer 启动完毕
+    ports:
+      - "10911:10911"  # 映射 Broker 的端口
+      - "10909:10909"  # 映射 Broker 的 HA 端口
+    volumes:
+      - /home/jlh/docker_v/rocketmq/conf/broker/broker.conf:/home/rocketmq/rocketmq-5.1.1/conf/broker.conf
+      # 映射配置文件目录
+    command: sh /home/rocketmq/rocketmq-5.1.1/bin/mqbroker -c /home/rocketmq/rocketmq-5.1.1/conf/broker.conf -n rocketmq-namesrv:9876  # 启动 Broker，连接到 NameServer  # 启动 Broker，连接到 NameServer
+  
+  rocketmq-console:
+    image: styletang/rocketmq-console-ng
+    container_name: rocketmq-console
+    ports:
+      - "8087:8080"  # 映射 RocketMQ Console 的端口
+    environment:
+      - rocketmq.config.namesrvAddr=rocketmq-namesrv:9876
+  #  mysql
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=jlhjlhjlh...
+    volumes:
+      - /home/jlh/docker_v/mysql/data:/var/lib/mysql
+      - /home/jlh/docker_v/mysql/conf:/etc/mysql/mysql.conf.d
+
+  #   redis
+  redis:
+    image: redis:6.0.6
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - /home/jlh/docker_v/redis/redis.conf:/etc/redis/redis.conf
+    command: [ "redis-server", "/etc/redis/redis.conf" ]
+  
+  #   minio
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    environment:
+      MINIO_ROOT_USER: jlhminio
+      MINIO_ROOT_PASSWORD: jlhjlhjlh...
+    volumes:
+      - /home/jlh/docker_v/minio/data:/data
+      - /home/jlh/docker_v/minio/config:/root/.minio
+    command: server /data --console-address ":9090" -address ":9000"
+  emqx:
+    image: emqx/emqx:5.7.0
+    container_name: emqx
+    user: root
+    ports:
+      - "1883:1883"
+      - "8081:8081"
+      - "8883:8883"
+      - "18083:18083"
+    environment:
+      - EMQX_NAME=emqx
+      - EMQX_HOST=emqx
+    volumes:
+      - /home/jlh/docker_v/emqx/data:/opt/emqx/data
+      - /home/jlh/docker_v/emqx/log:/opt/emqx/log
