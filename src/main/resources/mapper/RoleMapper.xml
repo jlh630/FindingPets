@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easyarch.FindingPetsSys.mapper.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.easyarch.FindingPetsSys.entity.Role">
+        <id property="roleId" column="role_id" jdbcType="INTEGER"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        role_id,role_name
+    </sql>
+    <!-- 插入角色 -->
+    <insert id="insertRole" parameterType="com.easyarch.FindingPetsSys.entity.Role">
+        INSERT INTO roles (role_name)
+        VALUES (#{role.roleName})
+    </insert>
+
+    <!-- 更新角色信息 -->
+    <update id="updateRole" parameterType="com.easyarch.FindingPetsSys.entity.Role">
+        UPDATE roles
+        SET role_name = #{role.roleName}
+        WHERE role_id = #{role.roleId}
+    </update>
+
+    <!-- 删除角色 -->
+    <delete id="deleteRole" parameterType="java.lang.Long">
+        DELETE FROM roles
+        WHERE role_id = #{id}
+    </delete>
+    <!--    ids查找roles-->
+    <select id="selectRolesByRoleIds" resultType="com.easyarch.FindingPetsSys.entity.Role">
+        SELECT role_id, role_name FROM roles WHERE role_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

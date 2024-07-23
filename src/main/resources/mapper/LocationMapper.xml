@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easyarch.FindingPetsSys.mapper.LocationMapper">
+
+    <resultMap id="BaseResultMap" type="com.easyarch.FindingPetsSys.entity.Location">
+        <id property="locationId" column="location_id" jdbcType="INTEGER"/>
+        <result property="longitude" column="longitude" jdbcType="DECIMAL"/>
+        <result property="latitude" column="latitude" jdbcType="DECIMAL"/>
+        <result property="timestamp" column="timestamp" jdbcType="TIMESTAMP"/>
+        <result property="deviceId" column="device_id" jdbcType="INTEGER"/>
+        <result property="petId" column="pet_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        location_id,longitude,latitude,
+        timestamp,device_id,pet_id
+    </sql>
+    <insert id="insertLocation">
+        insert into locations
+            (longitude,latitude,timestamp,device_id,pet_id)
+        values
+            (#{location.longitude}, #{location.latitude}, #{location.timestamp}, #{location.deviceId}, #{location.petId})
+    </insert>
+    <select id="selectTodayLocationsByPetId" resultType="com.easyarch.FindingPetsSys.entity.Location">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM locations
+        WHERE pet_id = #{petId}
+        AND timestamp >= DATE_FORMAT(CURDATE(), '%Y-%m-%d 00:00:00')
+        order by timestamp desc
+    </select>
+    <select id="queryMaxLocationByPetId" resultType="com.easyarch.FindingPetsSys.entity.Location">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM locations
+        WHERE pet_id = #{petId}
+        AND timestamp = (SELECT MAX(timestamp)
+        FROM locations
+        WHERE pet_id = #{petId})
+
+    </select>
+
+
+</mapper>

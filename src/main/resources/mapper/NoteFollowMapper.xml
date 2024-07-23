@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easyarch.FindingPetsSys.mapper.NoteFollowMapper">
+
+    <resultMap id="BaseResultMap" type="com.easyarch.FindingPetsSys.entity.NoteFollow">
+        <id property="userId" column="user_id" jdbcType="INTEGER"/>
+        <id property="noteId" column="note_id" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="revenue" column="revenue" jdbcType="DECIMAL"/>
+        <result property="timestamp" column="timestamp" jdbcType="TIMESTAMP"/>
+        <result property="petId" column="pet_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id
+        ,note_id,status,
+        revenue,pet_id,timestamp
+    </sql>
+    <insert id="insertNoteFollow" parameterType="com.easyarch.FindingPetsSys.entity.NoteFollow">
+        INSERT INTO note_follows (user_id, note_id, status, revenue, timestamp, pet_id)
+        VALUES (#{noteFollow.userId}, #{noteFollow.noteId}, #{noteFollow.status}, #{noteFollow.revenue},
+                #{noteFollow.timestamp}, #{noteFollow.petId})
+    </insert>
+
+    <update id="updateNoteFollow" parameterType="com.easyarch.FindingPetsSys.entity.NoteFollow">
+        UPDATE note_follows
+        <set>
+            <if test="noteFollow.status != null">status = #{noteFollow.status},</if>
+            pet_id = #{noteFollow.petId}
+        </set>
+        WHERE user_id = #{noteFollow.userId} AND note_id = #{noteFollow.noteId}
+    </update>
+    <update id="updateNoteFollowStatusExceptUserId">
+        UPDATE note_follows
+        <set>
+            pet_id = null,
+            status = #{status}
+        </set>
+        WHERE note_id = #{noteId} and user_id != #{userId}
+    </update>
+    <update id="updateAllNoteFollowStatusByNoteId">
+        UPDATE note_follows
+        <set>
+            pet_id = null,
+            status = #{status}
+        </set>
+        WHERE note_id = #{noteId}
+    </update>
+    <update id="updateNoteFollowStatusByNoteIdAndStatus">
+        UPDATE note_follows
+        <set>
+            status = #{updateStatus}
+        </set>
+        WHERE status=#{status} and note_id=#{noteId}
+    </update>
+
+    <delete id="deleteNoteFollow" parameterType="com.easyarch.FindingPetsSys.entity.NoteFollow">
+        DELETE FROM note_follows
+        WHERE user_id=#{noteFollow.userId} and note_id=#{noteFollow.noteId}
+    </delete>
+
+    <select id="selectNoteFollowsByUserId" resultType="com.easyarch.FindingPetsSys.entity.NoteFollow"
+            parameterType="Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM note_follows
+        WHERE user_id = #{userId}
+    </select>
+    <select id="queryNoteFollow" resultType="com.easyarch.FindingPetsSys.entity.NoteFollow">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM note_follows
+        WHERE user_id = #{userId} and note_id =#{noteId}
+    </select>
+</mapper>
