@@ -11,7 +11,7 @@ RUN apk update && \
 COPY target/FindingPetsSys-0.0.1-SNAPSHOT.jar /app/
 
 # 暴露端口
-EXPOSE 8080 25 465
+EXPOSE 8080 
 
 # 设置容器入口点
 ENTRYPOINT ["java", "-jar", "FindingPetsSys-0.0.1-SNAPSHOT.jar"]
