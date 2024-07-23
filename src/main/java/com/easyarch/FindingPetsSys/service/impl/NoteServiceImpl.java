@@ -213,6 +213,10 @@ public class NoteServiceImpl implements NoteService {
         List<Long> collect = notePermissionMapper.queryNotePermissionByUserId(userId).stream()
                 .map(NotePermission::getNoteId)
                 .collect(Collectors.toList());
+        if (collect.isEmpty()){
+            return new PageInfo<>();
+        }
+
         List<Note> notes = noteMapper.selectNotesByNoteIds(collect);
 
         notes.forEach((note) -> {
