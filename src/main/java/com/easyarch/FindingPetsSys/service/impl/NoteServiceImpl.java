@@ -214,7 +214,7 @@ public class NoteServiceImpl implements NoteService {
                 .map(NotePermission::getNoteId)
                 .collect(Collectors.toList());
         if (collect.isEmpty()){
-            return new PageInfo<>();
+            return new PageInfo<>(new ArrayList<>());
         }
 
         List<Note> notes = noteMapper.selectNotesByNoteIds(collect);
@@ -235,7 +235,7 @@ public class NoteServiceImpl implements NoteService {
                         note.getTimestamp()));
             }
         });
-        return noteSummaryDtoList.isEmpty() ? new PageInfo<>() :
+        return noteSummaryDtoList.isEmpty() ? new PageInfo<>(new ArrayList<>()) :
                 new PageInfo<>(noteSummaryDtoList.stream()
                         .skip((long) (pageNum - 1) * (long) pageSize)
                         .limit(pageSize).collect(Collectors.toList()));
