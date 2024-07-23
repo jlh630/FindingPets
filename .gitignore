@@ -31,5 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
-*yml
+
+### myal####
+*.yml
 *.yaml
