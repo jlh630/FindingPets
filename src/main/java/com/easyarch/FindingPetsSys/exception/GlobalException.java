@@ -2,7 +2,7 @@ package com.easyarch.FindingPetsSys.exception;
 
 import com.easyarch.FindingPetsSys.dto.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -43,8 +43,18 @@ public class GlobalException {
         return Result.error("服务器异常");
     }
 
+    @ExceptionHandler({ServletRequestBindingException.class})
+    public Result<String> handleArgsException(Exception e) {
+        log.warn("ValidatorException :{}", e.getMessage());
+        return Result.badRequest("参数异常");
+    }
+
     @ExceptionHandler({RuntimeException.class})
     public Result<String> handleRunTimeException(RuntimeException e) {
+        if (e.getCause() instanceof NumberFormatException) {
+            log.warn("ValidatorException :{}", e.getMessage());
+            return Result.badRequest("参数异常");
+        }
 
         StackTraceElement[] stackTrace = e.getStackTrace();
         StackTraceElement firstElement = stackTrace.length > 0 ? stackTrace[0] : null;
@@ -52,7 +62,7 @@ public class GlobalException {
         // 构建错误消息
         String errorMessage = "An error occurred: " + e.getMessage();
         if (firstElement != null) {
-            errorMessage += " at " + firstElement.toString();
+            errorMessage += " at " + firstElement;
         }
         log.error(errorMessage);
         return Result.error("操作失败");
