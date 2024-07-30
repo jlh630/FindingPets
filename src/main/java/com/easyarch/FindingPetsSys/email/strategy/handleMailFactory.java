@@ -26,6 +26,9 @@ public class handleMailFactory {
     }
 
     public HandleMailStrategy getStrategy(Integer type) {
+        if(type == null) {
+            return null;
+        }
         return strategies.get(type);
     }
 }
