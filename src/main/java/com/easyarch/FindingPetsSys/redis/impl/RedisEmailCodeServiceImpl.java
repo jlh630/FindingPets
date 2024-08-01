@@ -25,8 +25,8 @@ public class RedisEmailCodeServiceImpl implements RedisEmailCodeService {
      */
     public void expireEmailCode(String service, String email, String code) {
         String key =PREFIX+service + "::" + email;
-        redisTemplate.opsForValue().set(key, code);
-        redisTemplate.expire(key, 5L, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, code,5L, TimeUnit.MINUTES);
+//        redisTemplate.expire(key, 5L, TimeUnit.MINUTES);
         log.info("redis expire {} value{}!", key, code);
     }
 

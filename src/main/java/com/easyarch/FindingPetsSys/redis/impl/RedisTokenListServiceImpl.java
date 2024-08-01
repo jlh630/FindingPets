@@ -38,9 +38,9 @@ public class RedisTokenListServiceImpl implements RedisTokenListService {
      */
     public void setTokenId(String jti) {
         //set
-        redisTemplate.opsForValue().set(PREFIX + jti, "");
-        //expire
-        redisTemplate.expire(PREFIX + jti, 120L, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(PREFIX + jti, "",120L, TimeUnit.MINUTES);
+//        expire
+//        redisTemplate.expire(PREFIX + jti, 120L, TimeUnit.MINUTES);
         log.info("redis expire {} success!", PREFIX + jti);
     }
 
