@@ -52,14 +52,9 @@ public class EmqxConfig {
         client.setCallback(this.pushCallback);
         client.connect(options);
         String[] topics = this.topic.split(",");
-        String[] var4 = topics;
-        int var5 = topics.length;
-
-        for(int var6 = 0; var6 < var5; ++var6) {
-            String topic = var4[var6];
+        for (String topic : topics) {
             client.subscribe(topic);
         }
-
         return client;
     }
 }
