@@ -14,6 +14,7 @@ import com.easyarch.FindingPetsSys.exception.ValidatorException;
 import com.easyarch.FindingPetsSys.service.PetService;
 import com.easyarch.FindingPetsSys.util.UserContext;
 import com.github.pagehelper.PageInfo;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -41,22 +42,22 @@ public class PetController {
     public Result<String> addPet(@RequestParam("petName") String petName,
                                  @RequestParam("info") String info,
                                  @RequestParam("deviceCode") String code,
-                                 @RequestParam("file") MultipartFile file) throws ValidatorException, OperationFailedException, NotFoundException {
+                                 @RequestParam("file") MultipartFile file) throws ValidatorException, OperationFailedException, NotFoundException, MqttException {
         return Result.created("创建宠物成功", petService.insertPet(UserContext.getUser().getUserId(), petName, info, code, file));
     }
 
     @DeleteMapping({"/{petId}/device"})
-    public Result<String> unbindDevice(@PathVariable Long petId) throws ValidatorException, OperationFailedException, NotFoundException {
+    public Result<String> unbindDevice(@PathVariable Long petId) throws ValidatorException, OperationFailedException, NotFoundException, MqttException {
         return Result.operate(this.petService.removeDeviceIdByPetId(UserContext.getUser().getUserId(), petId));
     }
 
     @PutMapping({"/{petId}/device"})
-    public Result<String> bindDevice(@PathVariable Long petId, @RequestParam("deviceCode") String code) throws ValidatorException, OperationFailedException, NotFoundException {
+    public Result<String> bindDevice(@PathVariable Long petId, @RequestParam("deviceCode") String code) throws ValidatorException, OperationFailedException, NotFoundException, MqttException {
         return Result.operate(petService.addDeviceIdByPetId(UserContext.getUser().getUserId(), petId, code));
     }
 
     @DeleteMapping({"/{petId}"})
-    public Result<String> deletePet(@PathVariable Long petId) throws OperationFailedException, NotFoundException {
+    public Result<String> deletePet(@PathVariable Long petId) throws OperationFailedException, NotFoundException, MqttException {
         return Result.operate(petService.deletePet(UserContext.getUser().getUserId(), petId));
     }
 

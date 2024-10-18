@@ -13,16 +13,17 @@ import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface PetService {
-    String insertPet(Long userId, String petName, String info, String code, MultipartFile file) throws ValidatorException, OperationFailedException, NotFoundException;
+    String insertPet(Long userId, String petName, String info, String code, MultipartFile file) throws ValidatorException, OperationFailedException, NotFoundException, MqttException;
 
-    String deletePet(Long userId, Long petId) throws OperationFailedException, NotFoundException;
+    String deletePet(Long userId, Long petId) throws OperationFailedException, NotFoundException, MqttException;
 
-    String removeDeviceIdByPetId(Long userId, Long petId) throws ValidatorException, OperationFailedException, NotFoundException;
+    String removeDeviceIdByPetId(Long userId, Long petId) throws ValidatorException, OperationFailedException, NotFoundException, MqttException;
 
-    String addDeviceIdByPetId(Long userId, Long petId, String code) throws ValidatorException, OperationFailedException, NotFoundException;
+    String addDeviceIdByPetId(Long userId, Long petId, String code) throws ValidatorException, OperationFailedException, NotFoundException, MqttException;
 
     PetDetailDto queryPetInfoByPetId(Long petId) throws NotFoundException;
 

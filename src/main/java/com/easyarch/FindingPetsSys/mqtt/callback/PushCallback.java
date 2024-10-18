@@ -57,11 +57,10 @@ public class PushCallback implements MqttCallback {
     }
 
     public void deliveryComplete(IMqttDeliveryToken token) {
-            String logStr = "Mqtt {} send a message";
             if (token.isComplete()) {
-                log.info(String.format(logStr, "successfully"));
+                log.info("Mqtt successfully send a message ");
             } else {
-                log.warn(String.format(logStr, "failed to"));
+                log.info("Mqtt failed to send a message ");
             }
     }
 

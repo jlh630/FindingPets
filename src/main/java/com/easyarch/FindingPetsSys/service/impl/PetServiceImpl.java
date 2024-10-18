@@ -17,6 +17,8 @@ import com.easyarch.FindingPetsSys.mapper.DeviceMapper;
 import com.easyarch.FindingPetsSys.mapper.NoteMapper;
 import com.easyarch.FindingPetsSys.mapper.OrderMapper;
 import com.easyarch.FindingPetsSys.mapper.PetMapper;
+import com.easyarch.FindingPetsSys.mqtt.model.DeviceStatusMessage;
+import com.easyarch.FindingPetsSys.mqtt.service.MqttPublisherService;
 import com.easyarch.FindingPetsSys.service.PetService;
 import com.easyarch.FindingPetsSys.util.FileTypeUtil;
 import com.easyarch.FindingPetsSys.util.MinioUtil;
@@ -28,6 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -46,6 +50,10 @@ public class PetServiceImpl implements PetService {
     private NoteMapper noteMapper;
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private MqttPublisherService mqttPublisherService;
+    @Autowired
+    private Gson gson;
     @Value("${minio.user.bucketName}")
     private String bucketName;
     @Value("${minio.OutEndpoint}")
@@ -67,7 +75,7 @@ public class PetServiceImpl implements PetService {
      * @throws NotFoundException        未找到异常
      */
     @Transactional
-    public String insertPet(Long userId, String petName, String info, String code, MultipartFile file) throws ValidatorException, OperationFailedException, NotFoundException {
+    public String insertPet(Long userId, String petName, String info, String code, MultipartFile file) throws ValidatorException, OperationFailedException, NotFoundException, MqttException {
         if (StrUtil.hasEmpty(petName) || StrUtil.hasEmpty(info) || petName.length() > 10 || info.length() > 50) {
             throw new ValidatorException("参数不符合格式");
         }
@@ -97,6 +105,7 @@ public class PetServiceImpl implements PetService {
         deviceMapper.updateDevice(device);
         //上传文件
         minioUtil.uploadFile(file, fileName, bucketName);
+        mqttPublisherService.publish("status/" + device.getDeviceId(), 1, true, gson.toJson(new DeviceStatusMessage(1,null)));
         return "添加成功";
     }
 
@@ -109,7 +118,7 @@ public class PetServiceImpl implements PetService {
      * @throws NotFoundException        未找到异常
      */
     @Transactional
-    public String deletePet(Long userId, Long petId) throws OperationFailedException, NotFoundException {
+    public String deletePet(Long userId, Long petId) throws OperationFailedException, NotFoundException, MqttException {
         Pet pet = Optional.ofNullable(petMapper.queryPetByPetIdAndUserId(userId, petId)).orElseThrow(() -> new NotFoundException("错误宠物号"));
 
         if (pet.getDeviceId() != null) {
@@ -134,7 +143,7 @@ public class PetServiceImpl implements PetService {
      * @throws NotFoundException        未找到异常
      */
     @Transactional
-    public String removeDeviceIdByPetId(Long userId, Long petId) throws OperationFailedException, NotFoundException {
+    public String removeDeviceIdByPetId(Long userId, Long petId) throws OperationFailedException, NotFoundException, MqttException {
         Pet pet = petMapper.queryPetByPetIdAndUserId(userId, petId);
         if (pet == null || pet.getDeviceId() == null) {
             throw new NotFoundException("错误宠物号或者宠物没有绑定设备号");
@@ -156,6 +165,8 @@ public class PetServiceImpl implements PetService {
         pet.setDeviceId(null);
 
         petMapper.updatePetDeviceIdByPetId(null, petId);
+
+        mqttPublisherService.publish("status/"+device.getDeviceId(),1,true,gson.toJson(new DeviceStatusMessage(0,null)));
         return "解除绑定成功";
     }
 
@@ -171,7 +182,7 @@ public class PetServiceImpl implements PetService {
      * @throws NotFoundException        未找到异常
      */
     @Transactional
-    public String addDeviceIdByPetId(Long userId, Long petId, String code) throws ValidatorException, OperationFailedException, NotFoundException {
+    public String addDeviceIdByPetId(Long userId, Long petId, String code) throws ValidatorException, OperationFailedException, NotFoundException, MqttException {
         if (StrUtil.hasEmpty(code)) {
             throw new ValidatorException("错误的空参数");
         }
@@ -189,6 +200,8 @@ public class PetServiceImpl implements PetService {
         device.setPetId(petId);
         deviceMapper.updateDevice(device);
         petMapper.updatePetDeviceIdByPetId(device.getDeviceId(), petId);
+        mqttPublisherService.publish("status/" + device.getDeviceId(), 1, true, gson.toJson(new DeviceStatusMessage(1,null)));
+
         return "绑定成功";
 
     }
